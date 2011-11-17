@@ -2,8 +2,13 @@
 
 
 (defn delay-map
+  "Wraps the given map such that any value that is a Delay will be
+  forced when extracted."
   [& [m]]
-  (proxy [clojure.lang.APersistentMap] []
+  (proxy [clojure.lang.APersistentMap
+          clojure.lang.IObj
+          clojure.lang.IEditableCollection] []
+    
     ;; This method implements the "real" funtionality:
     (valAt
       ([k] (force (get m k)))
@@ -26,6 +31,9 @@
     (iterator [] (.iterator ^java.util.Map m))
     (meta [] (meta m))
     (seq [] (seq m))
+
+    (asTransient []
+      (throw (Exception. "I don't know how to implement this yet.")))
     ))
 
 
@@ -45,6 +53,7 @@
   `(delay-map (merge ~m (lazy-map ~@keyvals))))
 
 
-(def test (lazy-map
-           :foo (do (println "evaluated!") :bar)
-           :xxx "yyy"))
+(comment
+  (def test (lazy-map
+             :foo (do (println "evaluated!") :bar)
+             :xxx "yyy")))
