@@ -1,5 +1,5 @@
 (ns yoodls.pipe
-  (import (java.util.concurrent ArrayBlockingQueue LinkedBlockingQueue)))
+  (:import (java.util.concurrent ArrayBlockingQueue LinkedBlockingQueue)))
 
 
 (defn pipe

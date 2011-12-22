@@ -18,24 +18,28 @@
 (defmacro mfor
   "Map comprehension.
 
-   Build a map from a for expression, but more efficient.
+   Builds a map from a for expression.
 
    Example:
 
      (mfor [item col]
        (make-key item) (make-value item))
 
-   is equivalent to:
+   is equivalent to, but more efficient than:
 
      (into {}
        (for [item col]
          [(make-key item) (make-value item)]))
 
-   but avoids creating both the intermediate seq and the intermediate
+   mfor avoids creating both the intermediate seq and the intermediate
    two-element vectors.
 
    Note: the body must contain exactly two expressions.
    "
-  [iters key-expr val-expr]
-  (help!!!))
+  [[& iters] key-expr val-expr]
+  `(let [m# (atom (transient {}))]
+     (doseq [~@iters]
+       (swap! m# assoc! ~key-expr ~val-expr))
+     (persistent! @m#)))
+
 
